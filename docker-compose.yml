@@ -1,0 +1,22 @@
+services:
+
+  # ── Backend (Express + IMAP watcher + Twilio SMS) ──────────────────────────
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file: ./server/.env        # your Gmail + Twilio secrets
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  # ── Frontend (React SPA served by nginx) ───────────────────────────────────
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"                  # open http://localhost:8080
+    depends_on:
+      - server
+    restart: unless-stopped
